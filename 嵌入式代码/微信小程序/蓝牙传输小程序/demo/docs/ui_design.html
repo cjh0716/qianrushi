@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ESP32蓝牙配置小程序 - UI原型</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .phone-container {
+            width: 375px;
+            height: 812px;
+            background-color: #ffffff;
+            border-radius: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .status-bar {
+            height: 44px;
+            background-color: #07c160;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .nav-bar {
+            height: 44px;
+            background-color: #07c160;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            color: #ffffff;
+            position: relative;
+        }
+
+        .nav-back {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .nav-title {
+            flex: 1;
+            text-align: center;
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .nav-right {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .page-content {
+            height: calc(100% - 88px - 56px);
+            overflow-y: auto;
+            background-color: #f5f5f5;
+            padding-bottom: 16px;
+        }
+
+        .tab-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background-color: #ffffff;
+            border-top: 1px solid #e5e5e5;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: 4px;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 72px;
+            height: 100%;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .tab-item:active {
+            opacity: 0.7;
+        }
+
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+            position: relative;
+        }
+
+        .tab-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: #999999;
+        }
+
+        .tab-item.active .tab-icon svg {
+            stroke: #07c160;
+        }
+
+        .tab-text {
+            font-size: 10px;
+            color: #999999;
+        }
+
+        .tab-item.active .tab-text {
+            color: #07c160;
+        }
+
+        .section {
+            background-color: #ffffff;
+            margin-bottom: 10px;
+            padding: 16px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            color: #999999;
+            margin-bottom: 12px;
+            padding-left: 4px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            height: 44px;
+            background-color: #07c160;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: opacity 0.2s;
+        }
+
+        .btn-primary:active {
+            opacity: 0.8;
+        }
+
+        .btn-primary:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            height: 40px;
+            background-color: #f5f5f5;
+            color: #333333;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .device-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .device-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background-color: #f8f8f8;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .device-item:active {
+            background-color: #e8e8e8;
+        }
+
+        .device-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #07c160, #06ad56);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+
+        .device-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: #ffffff;
+        }
+
+        .device-info {
+            flex: 1;
+        }
+
+        .device-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333333;
+            margin-bottom: 4px;
+        }
+
+        .device-status {
+            font-size: 12px;
+            color: #999999;
+        }
+
+        .device-status.online {
+            color: #07c160;
+        }
+
+        .device-status.offline {
+            color: #ff4d4f;
+        }
+
+        .connect-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #07c160;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-label {
+            font-size: 14px;
+            color: #333333;
+            margin-bottom: 8px;
+            display: block;
+            font-weight: 500;
+        }
+
+        .input-field {
+            width: 100%;
+            height: 44px;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 0 12px;
+            font-size: 15px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: #07c160;
+            box-shadow: 0 0 0 2px rgba(7, 193, 96, 0.1);
+        }
+
+        .input-field.error {
+            border-color: #ff4d4f;
+            box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.1);
+        }
+
+        .input-field::placeholder {
+            color: #cccccc;
+        }
+
+        .error-message {
+            font-size: 12px;
+            color: #ff4d4f;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            height: 16px;
+        }
+
+        .connected-device {
+            background: linear-gradient(135deg, #f0fff4, #e6fffa);
+            border: 1px solid #b7eb8f;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .connected-device-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #07c160;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+
+        .connected-device-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: #ffffff;
+        }
+
+        .connected-device-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333333;
+        }
+
+        .status-feedback {
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+            text-align: center;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .status-feedback.success {
+            background-color: #f6ffed;
+            color: #52c41a;
+            border: 1px solid #b7eb8f;
+        }
+
+        .status-feedback.error {
+            background-color: #fff2f0;
+            color: #ff4d4f;
+            border: 1px solid #ffccc7;
+        }
+
+        .status-feedback.info {
+            background-color: #e6f7ff;
+            color: #1890ff;
+            border: 1px solid #91d5ff;
+        }
+
+        .status-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .status-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background-color: #f8f8f8;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .history-item:active {
+            background-color: #e8e8e8;
+        }
+
+        .history-info {
+            flex: 1;
+        }
+
+        .history-city {
+            font-size: 15px;
+            color: #333333;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .history-ssid {
+            font-size: 12px;
+            color: #999999;
+        }
+
+        .history-delete {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ff4d4f;
+            font-size: 16px;
+        }
+
+        .history-delete svg {
+            width: 18px;
+            height: 18px;
+            fill: #ff4d4f;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            color: #999999;
+        }
+
+        .empty-icon {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: #999999;
+        }
+
+        .empty-text {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .empty-hint {
+            font-size: 12px;
+            color: #cccccc;
+        }
+
+        .searching-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px;
+            color: #07c160;
+            font-size: 14px;
+        }
+
+        .searching-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .searching-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #07c160;
+            border-radius: 50%;
+            animation: searching 1.4s infinite ease-in-out both;
+        }
+
+        .searching-dot:nth-child(1) { animation-delay: -0.32s; }
+        .searching-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes searching {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .toast {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            color: #ffffff;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 12px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .toggle-password {
+            position: relative;
+        }
+
+        .toggle-password .eye-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .toggle-password .eye-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: #999999;
+        }
+
+        .guide-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: #ffffff;
+        }
+
+        .guide-icon {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 24px;
+        }
+
+        .guide-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: #07c160;
+        }
+
+        .guide-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .guide-description {
+            font-size: 14px;
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 24px;
+            opacity: 0.9;
+        }
+
+        .guide-btn {
+            padding: 12px 32px;
+            background-color: #07c160;
+            border: none;
+            border-radius: 24px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container" id="phone">
+        <div class="status-bar">
+            <span>9:41</span>
+            <div style="display: flex; gap: 6px;">
+                <span>📶</span>
+                <span>🔋</span>
+            </div>
+        </div>
+
+        <div class="nav-bar" id="navBar">
+            <div class="nav-back" id="navBack" style="display: none;" onclick="goBack()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+            </div>
+            <div class="nav-title" id="navTitle">设备配置</div>
+            <div class="nav-right"></div>
+        </div>
+
+        <div class="page-content" id="pageContent">
+            <div id="devicesTab">
+                <div class="section">
+                    <button class="btn-primary" onclick="startSearch()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <span id="searchBtnText">搜索蓝牙设备</span>
+                    </button>
+                </div>
+
+                <div id="searchingIndicator" style="display: none;">
+                    <div class="searching-indicator">
+                        <span>正在搜索附近设备</span>
+                        <div class="searching-dots">
+                            <div class="searching-dot"></div>
+                            <div class="searching-dot"></div>
+                            <div class="searching-dot"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">可用设备</div>
+                    <div class="device-list" id="deviceList">
+                        <div class="device-item" onclick="connectDevice('ESP32-001')">
+                            <div class="device-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="6" y="10" width="4" height="4"/>
+                                    <rect x="14" y="10" width="4" height="4"/>
+                                    <line x1="2" y1="10" x2="6" y2="10"/>
+                                    <line x1="18" y1="10" x2="22" y2="10"/>
+                                    <line x1="10" y1="2" x2="10" y2="10"/>
+                                    <line x1="14" y1="2" x2="14" y2="10"/>
+                                    <line x1="10" y1="14" x2="10" y2="22"/>
+                                    <line x1="14" y1="14" x2="14" y2="22"/>
+                                </svg>
+                            </div>
+                            <div class="device-info">
+                                <div class="device-name">ESP32-001</div>
+                                <div class="device-status online">在线</div>
+                            </div>
+                        </div>
+                        <div class="device-item" onclick="connectDevice('ESP32-002')">
+                            <div class="device-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="6" y="10" width="4" height="4"/>
+                                    <rect x="14" y="10" width="4" height="4"/>
+                                    <line x1="2" y1="10" x2="6" y2="10"/>
+                                    <line x1="18" y1="10" x2="22" y2="10"/>
+                                    <line x1="10" y1="2" x2="10" y2="10"/>
+                                    <line x1="14" y1="2" x2="14" y2="10"/>
+                                    <line x1="10" y1="14" x2="10" y2="22"/>
+                                    <line x1="14" y1="14" x2="14" y2="22"/>
+                                </svg>
+                            </div>
+                            <div class="device-info">
+                                <div class="device-name">ESP32-002</div>
+                                <div class="device-status offline">离线</div>
+                            </div>
+                        </div>
+                        <div class="device-item" onclick="connectDevice('ESP32-003')">
+                            <div class="device-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="6" y="10" width="4" height="4"/>
+                                    <rect x="14" y="10" width="4" height="4"/>
+                                    <line x1="2" y1="10" x2="6" y2="10"/>
+                                    <line x1="18" y1="10" x2="22" y2="10"/>
+                                    <line x1="10" y1="2" x2="10" y2="10"/>
+                                    <line x1="14" y1="2" x2="14" y2="10"/>
+                                    <line x1="10" y1="14" x2="10" y2="22"/>
+                                    <line x1="14" y1="14" x2="14" y2="22"/>
+                                </svg>
+                            </div>
+                            <div class="device-info">
+                                <div class="device-name">ESP32-003</div>
+                                <div class="device-status online">在线</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">已连接设备</div>
+                    <div id="connectedDeviceSection" style="display: none;">
+                        <div class="connected-device">
+                            <div class="connected-device-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="connected-device-name" id="connectedDeviceName">ESP32-001</div>
+                                <div style="font-size: 12px; color: #07c160; margin-top: 4px;">
+                                    <span class="connect-status"></span>已连接
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn-secondary" onclick="disconnectDevice()">断开连接</button>
+                    </div>
+                    <div id="noConnectedDevice" class="empty-state">
+                        <div class="empty-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/>
+                                <line x1="12" y1="22" x2="12" y2="15.5"/>
+                                <polyline points="22 8.5 12 15.5 2 8.5"/>
+                                <polyline points="2 15.5 12 8.5 22 15.5"/>
+                                <line x1="12" y1="2" x2="12" y2="8.5"/>
+                            </svg>
+                        </div>
+                        <div class="empty-text">暂无已连接设备</div>
+                        <div class="empty-hint">点击上方按钮搜索并连接设备</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="configTab" style="display: none;">
+                <div class="section">
+                    <div class="section-title">设备信息</div>
+                    <div id="configDeviceInfo" style="display: none;">
+                        <div class="connected-device">
+                            <div class="connected-device-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="connected-device-name" id="configDeviceName">ESP32-001</div>
+                                <div style="font-size: 12px; color: #07c160; margin-top: 4px;">
+                                    <span class="connect-status"></span>已连接
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="configNoDevice" class="empty-state">
+                        <div class="empty-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="6" y="10" width="4" height="4"/>
+                                <rect x="14" y="10" width="4" height="4"/>
+                                <line x1="2" y1="10" x2="6" y2="10"/>
+                                <line x1="18" y1="10" x2="22" y2="10"/>
+                                <line x1="10" y1="2" x2="10" y2="10"/>
+                                <line x1="14" y1="2" x2="14" y2="10"/>
+                                <line x1="10" y1="14" x2="10" y2="22"/>
+                                <line x1="14" y1="14" x2="14" y2="22"/>
+                            </svg>
+                        </div>
+                        <div class="empty-text">请先连接设备</div>
+                        <div class="empty-hint">在"设备搜索"页面连接设备后再进行配置</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">配置参数</div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">城市名称</label>
+                        <input type="text" class="input-field" id="cityInput" placeholder="请输入城市名称" maxlength="50" onblur="validateInput('city')">
+                        <div class="error-message" id="cityError"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">WiFi名称 (SSID)</label>
+                        <input type="text" class="input-field" id="ssidInput" placeholder="请输入WiFi名称" maxlength="32" onblur="validateInput('ssid')">
+                        <div class="error-message" id="ssidError"></div>
+                    </div>
+
+                    <div class="input-group toggle-password">
+                        <label class="input-label">WiFi密码</label>
+                        <input type="password" class="input-field" id="passwordInput" placeholder="请输入WiFi密码" maxlength="64" onblur="validateInput('password')">
+                        <div class="eye-icon" onclick="togglePassword()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </div>
+                        <div class="error-message" id="passwordError"></div>
+                    </div>
+
+                    <button class="btn-primary" id="sendBtn" onclick="sendConfig()" disabled>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m22 2-7 20-4-9-9-4Z"/>
+                            <path d="M22 2 11 13"/>
+                        </svg>
+                        <span>发送配置</span>
+                    </button>
+
+                    <div id="statusFeedback" style="display: none;" class="status-feedback">
+                        <div class="status-icon"></div>
+                        <span></span>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">配置历史</div>
+                    <div class="history-list" id="historyList">
+                        <div class="history-item" onclick="loadHistory('北京', 'HomeWiFi', '12345678')">
+                            <div class="history-info">
+                                <div class="history-city">北京</div>
+                                <div class="history-ssid">HomeWiFi</div>
+                            </div>
+                            <div class="history-delete" onclick="deleteHistory(event)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 6h18"/>
+                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="history-item" onclick="loadHistory('上海', 'OfficeWiFi', '87654321')">
+                            <div class="history-info">
+                                <div class="history-city">上海</div>
+                                <div class="history-ssid">OfficeWiFi</div>
+                            </div>
+                            <div class="history-delete" onclick="deleteHistory(event)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 6h18"/>
+                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="history-item" onclick="loadHistory('广州', 'APartmentWiFi', 'abcdefgh')">
+                            <div class="history-info">
+                                <div class="history-city">广州</div>
+                                <div class="history-ssid">ApartmentWiFi</div>
+                            </div>
+                            <div class="history-delete" onclick="deleteHistory(event)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 6h18"/>
+                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-bar">
+            <div class="tab-item active" id="tabDevices" onclick="switchTab('devices')">
+                <div class="tab-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="6" y="10" width="4" height="4"/>
+                        <rect x="14" y="10" width="4" height="4"/>
+                        <line x1="2" y1="10" x2="6" y2="10"/>
+                        <line x1="18" y1="10" x2="22" y2="10"/>
+                        <line x1="10" y1="2" x2="10" y2="10"/>
+                        <line x1="14" y1="2" x2="14" y2="10"/>
+                        <line x1="10" y1="14" x2="10" y2="22"/>
+                        <line x1="14" y1="14" x2="14" y2="22"/>
+                    </svg>
+                </div>
+                <div class="tab-text">设备</div>
+            </div>
+            <div class="tab-item" id="tabConfig" onclick="switchTab('config')">
+                <div class="tab-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                </div>
+                <div class="tab-text">配置</div>
+            </div>
+        </div>
+
+        <div class="toast" id="toast"></div>
+        <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+            <div class="loading-spinner"></div>
+            <div id="loadingText">设置中...</div>
+        </div>
+
+        <div class="guide-overlay" id="guideOverlay">
+            <div class="guide-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                </svg>
+            </div>
+            <div class="guide-title">欢迎使用ESP32配置工具</div>
+            <div class="guide-description">
+                本工具通过蓝牙方式为ESP32设备配置网络参数。<br><br>
+                1. 确保ESP32设备已开启蓝牙<br>
+                2. 点击"搜索蓝牙设备"找到您的设备<br>
+                3. 输入城市、WiFi名称和密码<br>
+                4. 点击"发送配置"完成设置
+            </div>
+            <button class="guide-btn" onclick="closeGuide()">开始使用</button>
+        </div>
+    </div>
+
+    <script>
+        let isConnected = false;
+        let connectedDevice = '';
+
+        function switchTab(tab) {
+            const devicesTab = document.getElementById('devicesTab');
+            const configTab = document.getElementById('configTab');
+            const tabDevices = document.getElementById('tabDevices');
+            const tabConfig = document.getElementById('tabConfig');
+            const navBack = document.getElementById('navBack');
+
+            tabDevices.classList.remove('active');
+            tabConfig.classList.remove('active');
+
+            if (tab === 'devices') {
+                devicesTab.style.display = 'block';
+                configTab.style.display = 'none';
+                tabDevices.classList.add('active');
+                document.getElementById('navTitle').textContent = '设备配置';
+                navBack.style.display = 'none';
+            } else {
+                devicesTab.style.display = 'none';
+                configTab.style.display = 'block';
+                tabConfig.classList.add('active');
+                document.getElementById('navTitle').textContent = '配置信息';
+                navBack.style.display = 'flex';
+                updateConfigDeviceInfo();
+            }
+        }
+
+        function goBack() {
+            switchTab('devices');
+        }
+
+        function startSearch() {
+            const btnText = document.getElementById('searchBtnText');
+            const indicator = document.getElementById('searchingIndicator');
+            
+            btnText.textContent = '停止搜索';
+            indicator.style.display = 'block';
+            
+            setTimeout(() => {
+                btnText.textContent = '搜索蓝牙设备';
+                indicator.style.display = 'none';
+                showToast('搜索完成，找到3个设备');
+            }, 2000);
+        }
+
+        function connectDevice(deviceName) {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingText = document.getElementById('loadingText');
+            
+            loadingText.textContent = '正在连接 ' + deviceName + '...';
+            loadingOverlay.style.display = 'flex';
+
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+                isConnected = true;
+                connectedDevice = deviceName;
+                
+                document.getElementById('connectedDeviceSection').style.display = 'block';
+                document.getElementById('noConnectedDevice').style.display = 'none';
+                document.getElementById('connectedDeviceName').textContent = deviceName;
+                
+                updateConfigDeviceInfo();
+                showToast('成功连接 ' + deviceName);
+            }, 1500);
+        }
+
+        function disconnectDevice() {
+            isConnected = false;
+            connectedDevice = '';
+            
+            document.getElementById('connectedDeviceSection').style.display = 'none';
+            document.getElementById('noConnectedDevice').style.display = 'block';
+            updateConfigDeviceInfo();
+            showToast('已断开连接');
+        }
+
+        function updateConfigDeviceInfo() {
+            const configDeviceInfo = document.getElementById('configDeviceInfo');
+            const configNoDevice = document.getElementById('configNoDevice');
+            const sendBtn = document.getElementById('sendBtn');
+
+            if (isConnected) {
+                configDeviceInfo.style.display = 'block';
+                configNoDevice.style.display = 'none';
+                document.getElementById('configDeviceName').textContent = connectedDevice;
+                checkInputValidity();
+            } else {
+                configDeviceInfo.style.display = 'none';
+                configNoDevice.style.display = 'block';
+                sendBtn.disabled = true;
+            }
+        }
+
+        function validateInput(field) {
+            const input = document.getElementById(field + 'Input');
+            const error = document.getElementById(field + 'Error');
+            const value = input.value.trim();
+
+            if (!value) {
+                input.classList.add('error');
+                const labels = { city: '城市名称', ssid: 'WiFi名称', password: 'WiFi密码' };
+                error.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' + labels[field] + '不能为空';
+            } else {
+                input.classList.remove('error');
+                error.textContent = '';
+            }
+            checkInputValidity();
+        }
+
+        function checkInputValidity() {
+            const city = document.getElementById('cityInput').value.trim();
+            const ssid = document.getElementById('ssidInput').value.trim();
+            const password = document.getElementById('passwordInput').value.trim();
+            const sendBtn = document.getElementById('sendBtn');
+
+            if (isConnected && city && ssid && password) {
+                sendBtn.disabled = false;
+            } else {
+                sendBtn.disabled = true;
+            }
+        }
+
+        function togglePassword() {
+            const passwordInput = document.getElementById('passwordInput');
+            const eyeIcon = passwordInput.parentElement.querySelector('.eye-icon svg');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.setAttribute('viewBox', '0 0 24 24');
+                eyeIcon.innerHTML = '<path d="M17 13a7 7 0 0 1-7 7 7 7 0 0 1-7-7 7 7 0 0 1 7-7 7 7 0 0 1 7 7Z"/><line x1="1" y1="1" x2="23" y2="23"/>';
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.setAttribute('viewBox', '0 0 24 24');
+                eyeIcon.innerHTML = '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>';
+            }
+        }
+
+        function sendConfig() {
+            const city = document.getElementById('cityInput').value.trim();
+            const ssid = document.getElementById('ssidInput').value.trim();
+            const password = document.getElementById('passwordInput').value.trim();
+            
+            validateInput('city');
+            validateInput('ssid');
+            validateInput('password');
+
+            if (!city || !ssid || !password) {
+                showToast('请填写完整配置信息');
+                return;
+            }
+
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingText = document.getElementById('loadingText');
+            const statusFeedback = document.getElementById('statusFeedback');
+            
+            loadingText.textContent = '正在发送配置...';
+            loadingOverlay.style.display = 'flex';
+            statusFeedback.style.display = 'none';
+
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+                
+                const success = Math.random() > 0.3;
+                if (success) {
+                    statusFeedback.innerHTML = '<div class="status-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><span>配置发送成功！设备正在连接WiFi...</span>';
+                    statusFeedback.className = 'status-feedback success';
+                    
+                    document.getElementById('cityInput').value = '';
+                    document.getElementById('ssidInput').value = '';
+                    document.getElementById('passwordInput').value = '';
+                    document.getElementById('cityError').textContent = '';
+                    document.getElementById('ssidError').textContent = '';
+                    document.getElementById('passwordError').textContent = '';
+                    document.querySelectorAll('.input-field').forEach(i => i.classList.remove('error'));
+                } else {
+                    statusFeedback.innerHTML = '<div class="status-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><span>配置发送失败，请检查设备连接后重试</span>';
+                    statusFeedback.className = 'status-feedback error';
+                }
+                
+                statusFeedback.style.display = 'flex';
+                checkInputValidity();
+            }, 2000);
+        }
+
+        function loadHistory(city, ssid, password) {
+            document.getElementById('cityInput').value = city;
+            document.getElementById('ssidInput').value = ssid;
+            document.getElementById('passwordInput').value = password;
+            
+            document.getElementById('cityError').textContent = '';
+            document.getElementById('ssidError').textContent = '';
+            document.getElementById('passwordError').textContent = '';
+            document.querySelectorAll('.input-field').forEach(i => i.classList.remove('error'));
+            
+            checkInputValidity();
+            showToast('已加载历史配置');
+        }
+
+        function deleteHistory(event) {
+            event.stopPropagation();
+            const item = event.target.closest('.history-item');
+            item.style.opacity = '0';
+            setTimeout(() => {
+                item.remove();
+                showToast('已删除历史记录');
+            }, 300);
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        function closeGuide() {
+            const guideOverlay = document.getElementById('guideOverlay');
+            guideOverlay.style.opacity = '0';
+            setTimeout(() => {
+                guideOverlay.style.display = 'none';
+            }, 300);
+        }
+
+        document.querySelectorAll('.input-field').forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('error');
+                const field = this.id.replace('Input', '');
+                document.getElementById(field + 'Error').textContent = '';
+                checkInputValidity();
+            });
+        });
+    </script>
+</body>
+</html>

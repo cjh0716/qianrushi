@@ -1,0 +1,100 @@
+<view class="container">
+  <view wx:if="{{showGuide}}" class="guide-overlay">
+    <view class="guide-content">
+      <view class="guide-icon">
+        <text class="icon-text">🔧</text>
+      </view>
+      <view class="guide-title">欢迎使用ESP32配置工具</view>
+      <view class="guide-description">
+        本工具通过蓝牙方式为ESP32设备配置网络参数。
+      </view>
+      <view class="guide-steps">
+        <view class="guide-step">
+          <view class="step-number">1</view>
+          <view class="step-text">确保ESP32设备已开启蓝牙</view>
+        </view>
+        <view class="guide-step">
+          <view class="step-number">2</view>
+          <view class="step-text">点击"搜索蓝牙设备"找到您的设备</view>
+        </view>
+        <view class="guide-step">
+          <view class="step-number">3</view>
+          <view class="step-text">输入城市、WiFi名称和密码</view>
+        </view>
+        <view class="guide-step">
+          <view class="step-number">4</view>
+          <view class="step-text">点击"发送配置"完成设置</view>
+        </view>
+      </view>
+      <button class="guide-btn" bindtap="closeGuide">开始使用</button>
+    </view>
+  </view>
+
+  <view class="section">
+    <button class="btn-primary" bindtap="startSearch">
+      <text class="btn-icon">{{isSearching ? '⏹️' : '🔍'}}</text>
+      <text>{{isSearching ? '停止搜索' : '搜索蓝牙设备'}}</text>
+    </button>
+  </view>
+
+  <view wx:if="{{isSearching}}" class="searching-indicator">
+    <text>正在搜索附近设备</text>
+    <view class="searching-dots">
+      <view class="searching-dot"></view>
+      <view class="searching-dot"></view>
+      <view class="searching-dot"></view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">可用设备</view>
+    <view class="device-list">
+      <view 
+        wx:for="{{devices}}" 
+        wx:key="deviceId" 
+        class="device-item" 
+        bindtap="connectDevice"
+        data-deviceid="{{item.deviceId}}"
+        data-devicename="{{item.name}}"
+      >
+        <view class="device-icon">
+          <text class="icon-text">📟</text>
+        </view>
+        <view class="device-info">
+          <view class="device-name">{{item.name}}</view>
+          <view class="device-status online">在线</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <button class="btn-secondary" bindtap="goToConfig">前往配置页面</button>
+  </view>
+
+  <view class="section">
+    <view class="section-title">已连接设备</view>
+    <view wx:if="{{isConnected && connectedDevice}}">
+      <view class="connected-device">
+        <view class="connected-device-icon">
+          <text class="icon-text">✓</text>
+        </view>
+        <view>
+          <view class="connected-device-name">{{connectedDevice}}</view>
+          <view class="connected-device-status">
+            <view class="connect-status"></view>
+            <text>已连接</text>
+          </view>
+        </view>
+      </view>
+      <button class="btn-secondary" bindtap="disconnectDevice">断开连接</button>
+    </view>
+    <view wx:else class="empty-state">
+      <view class="empty-icon">
+        <text class="icon-text">📡</text>
+      </view>
+      <view class="empty-text">暂无已连接设备</view>
+      <view class="empty-hint">点击上方按钮搜索并连接设备</view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,23 @@
+<view class="tab-bar">
+  <view 
+    wx:for="{{list}}" 
+    wx:key="index" 
+    class="tab-item {{index === currentIndex ? 'active' : ''}}"
+    bindtap="switchTab"
+    data-index="{{index}}"
+  >
+    <view class="tab-icon">
+      <view wx:if="{{index === 0}}" class="icon-device">
+        <view class="device-box">
+          <view class="device-btn device-btn-left"></view>
+          <view class="device-btn device-btn-right"></view>
+        </view>
+      </view>
+      <view wx:else class="icon-config">
+        <view class="config-ring"></view>
+        <view class="config-center"></view>
+      </view>
+    </view>
+    <view class="tab-text">{{item.text}}</view>
+  </view>
+</view>

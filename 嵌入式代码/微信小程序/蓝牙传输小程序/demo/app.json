@@ -1,0 +1,21 @@
+{
+  "pages": [
+    "pages/devices/devices",
+    "pages/config/config"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#07c160",
+    "navigationBarTitleText": "设备配置",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f5f5"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "permission": {
+    "scope.bluetooth": {
+      "desc": "需要蓝牙权限来搜索和连接ESP32设备"
+    }
+  },
+  "requiredBackgroundModes": ["bluetooth"]
+}

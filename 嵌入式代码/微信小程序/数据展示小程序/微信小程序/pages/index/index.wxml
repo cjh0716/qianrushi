@@ -1,0 +1,85 @@
+<!-- index.wxml -->
+<view class="page-container">
+  <!-- 头部天气 - 改回第一版排版 -->
+  <view class="header-container weather-info">
+    <view class="header-1">
+      <view>天气</view>
+      <view>天气温度</view>
+      <view>天气湿度</view>
+    </view>
+    <view class="header-2">
+      <view>{{deviceValueMap.info || '--'}}</view>
+      <view>{{deviceValueMap.temperature || '--'}}℃</view>
+      <view>{{deviceValueMap.humidity || '--'}}%</view>
+    </view>
+    <view class="header-3">
+      <view>所在城市：{{deviceValueMap.city || '--'}}</view>
+    </view>
+  </view>
+
+  <!-- 中间数据 - 保持不变 -->
+  <view class="data-container">
+    <!-- 数据项：设备状态 -->
+    <view class="data-item device-status">
+      <image src="/图片/设备状态.png" class="data-picture"/>
+      <view class="data-text">
+        <view class="data-title">设备状态</view>
+        <view class="data-value status-online" wx:if="{{deviceStatusLog.data.list[0].status == 1}}">在线</view>
+        <view class="data-value status-offline" wx:elif="{{deviceStatusLog.data.list[0].status != 1}}">离线</view>
+        <view class="data-value status-unknown" wx:else>--</view>
+      </view>
+    </view>
+
+    <!-- 数据项：当前WIFI -->
+    <view class="data-item wifi-status">
+      <image src="/图片/wifi.png" class="data-picture"/>
+      <view class="data-text">
+        <view class="data-title">当前WIFI</view>
+        <view class="data-value">{{deviceValueMap.ssid || '未连接'}}</view>
+      </view>
+    </view>
+
+    <!-- 数据项：设备温度 -->
+    <view class="data-item device-temp {{deviceValueMap.temp > 60 ? 'temp-warning-active' : ''}}" style="background-color: {{deviceValueMap.temp > 60 ? '#ffebee' : '#fff'}};">
+      <image src="/图片/CurrentTemperature.png" class="data-picture"/>
+      <view class="data-text">
+        <view class="data-title">设备温度</view>
+        <view class="data-value" style="color: {{deviceValueMap.temp > 60 ? '#ed3f14' : '#7f7f7f'}};">{{deviceValueMap.temp || '--'}}℃</view>
+      </view>
+      <!-- 温度过高警告 -->
+      <view wx:if="{{deviceValueMap.temp > 60}}" class="warning-badge temp-warning">⚠高温</view>
+    </view>
+
+    <!-- 数据项：设备湿度 -->
+    <view class="data-item device-hum {{deviceValueMap.hum > 75 ? 'hum-warning-active' : ''}}" style="background-color: {{deviceValueMap.hum > 75 ? '#e3f2fd' : '#fff'}};">
+      <image src="/图片/CurrentHumidity.png" class="data-picture"/>
+      <view class="data-text">
+        <view class="data-title">设备湿度</view>
+        <view class="data-value" style="color: {{deviceValueMap.hum > 75 ? '#1976d2' : '#7f7f7f'}};">{{deviceValueMap.hum || '--'}}%</view>
+      </view>
+      <!-- 湿度高警告 -->
+      <view wx:if="{{deviceValueMap.hum > 75}}" class="warning-badge hum-warning">💧高湿</view>
+    </view>
+  </view>
+
+  <!-- 蚕茧数据统计 - 改回第一版排版 -->
+  <view class="header-container cocoon-stats" style="background-color: {{percentage < 80 ? '#ed3f14' : '#3d7ef9'}};">
+    <view class="header-1">
+      <view>当前识别蚕茧数</view>
+      <view>好茧数</view>
+      <view>坏茧数</view>
+    </view>
+    <view class="header-2">
+      <view>{{deviceValueMap.total || 0}}</view>
+      <view>{{deviceValueMap.grate || 0}}</view>
+      <view>{{deviceValueMap.bad || 0}}</view>
+    </view>
+    <view class="header-3 cocoon-rate">
+      <view class="rate-container">
+        <image src="/图片/{{percentage >= 80 ? '达标.png' : '警告.png'}}" class="rate-image"/>
+        <text>好茧率：</text>
+        <text class="rate-big">{{percentage || 0}}%</text>
+      </view>
+    </view>
+  </view>
+</view>

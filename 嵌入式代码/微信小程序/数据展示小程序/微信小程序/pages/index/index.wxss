@@ -1,0 +1,228 @@
+/* index.wxss */
+/* 通用样式 */
+.page-container {
+  padding: 36rpx;
+}
+
+.header-container{
+  background-color: #3d7ef9;
+  color: #fff;
+  border-radius: 36rpx;
+  padding: 32rpx 64rpx;
+  transition: background-color 0.3s ease;
+}
+.header-container .header-1{
+  display: flex;
+  justify-content: space-between;
+  font-size: 28rpx;
+}
+.header-container .header-2{
+  display: flex;
+  justify-content: space-between;
+  font-size: 64rpx;
+}
+.header-container .header-3{
+  margin-top: 36rpx;
+  font-size: 24rpx;
+}
+
+/* 好茧率容器 */
+.rate-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+}
+
+/* 好茧率图片 */
+.rate-image {
+  width: 48rpx;
+  height: 48rpx;
+  vertical-align: middle;
+}
+
+/* 好茧率大字体 */
+.cocoon-rate .rate-big {
+  font-size: 48rpx;
+  font-weight: bold;
+  margin: 0 8rpx;
+}
+
+/* 数据项通用样式 */
+.data-container,
+.light-control-container {
+  margin-top: 36rpx;
+  display: grid;
+  justify-content: center;
+  grid-template-columns: repeat(auto-fill, 300rpx);
+  grid-gap: 36rpx;
+}
+
+.data-item {
+  position: relative;
+  background-color: #fff;
+  height: 180rpx;
+  box-shadow: #d6d6d6 0 0 8rpx;
+  border-radius: 36rpx;
+  display: flex;
+  justify-content: space-between;
+  transition: background-color 0.3s ease, border 0.3s ease;
+}
+
+.data-item .data-text {
+  position: absolute;
+  top: 36rpx;
+  right: 24rpx;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.data-item .data-picture {
+  position: absolute;
+  height: 96rpx;
+  width: 96rpx;
+  left: 16rpx;
+  top: 16rpx;
+}
+
+.data-item .data-title {
+  font-size: 28rpx;
+  color: #7f7f7f;
+}
+
+.data-item .data-value {
+  font-size: 52rpx;
+  font-weight: bold;
+  color: #7f7f7f;
+  transition: color 0.3s ease;
+}
+
+/* 设备状态颜色 */
+.data-item.device-status .data-value.status-online {
+  color: #07c160 !important;
+}
+
+.data-item.device-status .data-value.status-offline {
+  color: #ed3f14 !important;
+}
+
+.data-item.device-status .data-value.status-unknown {
+  color: #999 !important;
+}
+
+/* 警告徽章样式 */
+.warning-badge {
+  position: absolute;
+  top: 16rpx;
+  right: 16rpx;
+  color: #fff;
+  font-size: 20rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
+  animation: blink 1s ease-in-out infinite;
+}
+
+.temp-warning {
+  background-color: #ed3f14;
+}
+
+.hum-warning {
+  background-color: #1976d2;
+}
+
+/* 闪烁动画 */
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* 温度过高时的数据项样式 */
+.data-item.temp-warning-active {
+  background-color: #ffebee !important;
+  border: 2rpx solid #ed3f14;
+}
+
+.data-item.temp-warning-active .data-value {
+  color: #ed3f14 !important;
+}
+
+/* 湿度过高时的数据项样式 */
+.data-item.hum-warning-active {
+  background-color: #e3f2fd !important;
+  border: 2rpx solid #1976d2;
+}
+
+.data-item.hum-warning-active .data-value {
+  color: #1976d2 !important;
+}
+
+/* 蚕茧统计区域的特殊样式 */
+.cocoon-stats {
+  margin-top: 36rpx;
+  transition: background-color 0.5s ease;
+}
+
+/* 好茧率警告文字 */
+.header-3 view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 蚕茧部分的header-3字体调整 */
+.cocoon-stats .header-3 {
+  font-size: 28rpx;
+}
+
+/* 响应式适配 */
+@media (max-width: 750rpx) {
+  .data-container,
+  .light-control-container {
+    grid-template-columns: repeat(auto-fill, 280rpx);
+    grid-gap: 24rpx;
+  }
+  
+  .header-container {
+    padding: 24rpx 36rpx;
+  }
+  
+  .header-container .header-2 {
+    font-size: 48rpx;
+  }
+  
+  .data-item {
+    height: 160rpx;
+  }
+  
+  .data-item .data-value {
+    font-size: 40rpx;
+  }
+  
+  /* 好茧率大字体在小屏适配 */
+  .cocoon-rate .rate-big {
+    font-size: 40rpx;
+  }
+  
+  .rate-image {
+    width: 40rpx;
+    height: 40rpx;
+  }
+}
+
+/* 加载状态 */
+.loading-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
